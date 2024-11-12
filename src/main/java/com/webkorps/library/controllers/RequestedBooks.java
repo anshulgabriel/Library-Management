@@ -57,7 +57,6 @@ public class RequestedBooks extends HttpServlet {
     }
 
     private List<Book> getAllBooks(String memberId, String booleanValue) {
-        System.out.println("Fetching data from the database for user");
         return BookDao.getUserFromBookDetailsUsingId(memberId, booleanValue);
     }
 }

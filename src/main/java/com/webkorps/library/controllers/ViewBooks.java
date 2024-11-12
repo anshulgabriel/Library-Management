@@ -48,7 +48,6 @@ public class ViewBooks extends HttpServlet {
     }
 
     private List<Book> getAllBooks() {
-        System.out.println("Fetching data from the database");
         return BookDao.getBooks();
     }
 

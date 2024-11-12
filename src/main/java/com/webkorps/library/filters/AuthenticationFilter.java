@@ -17,7 +17,6 @@ public class AuthenticationFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        // Initialization if needed
     }
 
     @Override
@@ -28,25 +27,24 @@ public class AuthenticationFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         HttpSession session = httpRequest.getSession();
 
-        // Get the request URI
         String requestURI = httpRequest.getRequestURI();
 
-        // Allow access to login page and other excluded pages
+        
         if (requestURI.endsWith("/index.jsp") || requestURI.endsWith("/login.jsp")
                 || requestURI.endsWith("/signup.jsp") || isResourceRequest(requestURI)
                 || requestURI.endsWith("/loginFilter")
                 || requestURI.endsWith("/registerFilter")
                 || requestURI.endsWith("/viewIndexBooks")
                 || requestURI.endsWith("/welcome.jsp")) {
-            chain.doFilter(request, response); // Continue processing
+            chain.doFilter(request, response); 
             return;
         }
 
         boolean loggedIn = (session != null && session.getAttribute("user") != null);
         if (loggedIn) {
-            chain.doFilter(request, response); // User is logged in, continue
+            chain.doFilter(request, response); 
         } else {
-            httpResponse.sendRedirect("index.jsp"); // Redirect to login page
+            httpResponse.sendRedirect("viewIndexBooks"); 
         }
     }
 
@@ -61,6 +59,5 @@ public class AuthenticationFilter implements Filter {
 
     @Override
     public void destroy() {
-        // Cleanup if needed
     }
 }

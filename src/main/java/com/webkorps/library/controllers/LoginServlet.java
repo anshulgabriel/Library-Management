@@ -26,14 +26,12 @@ public class LoginServlet extends HttpServlet {
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
 
-            response.sendRedirect("index.jsp");
+            response.sendRedirect("viewIndexBooks");
 
         } else {
             request.setAttribute("status", "failed");
             RequestDispatcher rd = request.getRequestDispatcher("login.jsp");
             rd.forward(request, response);
-//            response.sendRedirect("index.jsp?error=invalid"); // Redirect back to login with error
-
         }
     }
 }

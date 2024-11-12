@@ -54,11 +54,9 @@ public class RequestBook extends HttpServlet {
             failedMessage = "You Can Request The Same Book Only Once.";
         }
 
-        // Logic to process the request and determine success
         boolean success = saveBookDetails;
         String message = success ? "Book Requested. Soon Will Be Approved By Admin." : failedMessage;
 
-        // Set response type to JSON
         response.setContentType(
                 "application/json");
         PrintWriter out = response.getWriter();

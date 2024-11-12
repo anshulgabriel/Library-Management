@@ -30,20 +30,17 @@ public class BookService {
             throws IOException, ServletException {
         String bookImageName = bookImage.getSubmittedFileName();
 
-        // Ensure the directory exists
         File dir = new File(savePath);
         if (!dir.exists()) {
             dir.mkdirs();
         }
         File file;
         if (bookImage.getSize() > 0) {
-            // Compress and save the image
             file = new File(savePath + File.separator + bookImageName);
             try (InputStream inputStream = bookImage.getInputStream()) {
                 BufferedImage originalImage = ImageIO.read(inputStream);
                 BufferedImage compressedImage = CompressMyImage.compressImage(originalImage, bookImage);
 
-                // Save the compressed image
                 try (OutputStream outputStream = Files.newOutputStream(file.toPath())) {
                     ImageIO.write(compressedImage, "jpg", outputStream);
                 }
@@ -56,7 +53,6 @@ public class BookService {
             bookImageName = "DefaultBookImage.jpg";
         }
 
-        // Save book information
         int saveBook = BookDao.saveBook(bookName, bookAuthor, bookEdition, bookQuantity, file.toPath().toString(), bookImageName);
         String status = (saveBook > 0) ? SUCCESS_STATUS : FAILED_STATUS;
         forwardWithStatus(request, response, status, JSP_PAGE);
@@ -78,18 +74,14 @@ public class BookService {
             bookName = savedBook.get().getBookName();
         }
         if (bookAuthor.trim().isBlank()) {
-            System.out.println("Author is null");
             bookAuthor = savedBook.get().getBookAuthor();
         }
         if (bookEdition.trim().isBlank()) {
-            System.out.println("Edition is null");
             bookEdition = savedBook.get().getBookEdition();
         }
         if (bookQuantity <= 0) {
             bookQuantity = savedBook.get().getQuantity();
         }
-        System.out.println("5");
-        // Ensure the directory exists
         File dir = new File(savePath);
         if (!dir.exists()) {
             dir.mkdirs();
@@ -97,18 +89,14 @@ public class BookService {
 
         File file;
         if (bookImage.getSize() <= 0) {
-            System.out.println("6");
             bookImageName = savedBook.get().getBookImageName();
             file = new File(savedBook.get().getPath());
         } else {
-            System.out.println("7");
-            // Compress and save the image
             file = new File(savePath + File.separator + bookImageName);
             try (InputStream inputStream = bookImage.getInputStream()) {
                 BufferedImage originalImage = ImageIO.read(inputStream);
                 BufferedImage compressedImage = CompressMyImage.compressImage(originalImage, bookImage);
 
-                // Save the compressed image
                 try (OutputStream outputStream = Files.newOutputStream(file.toPath())) {
                     ImageIO.write(compressedImage, "jpg", outputStream);
                 }
@@ -117,12 +105,8 @@ public class BookService {
                 return;
             }
         }
-        System.out.println(bookName + " : " + bookAuthor + " : " + bookEdition + " : " + bookQuantity + " : " + bookImageName + " : " + file.toPath().toString());
-        System.out.println("8");
-        // Save book information
         int saveBook = BookDao.updateBook(bookName, bookAuthor, bookEdition, (int) bookQuantity, file.toPath().toString(), bookImageName, (int)bookIntId);
         String status = (saveBook > 0) ? SUCCESS_STATUS : FAILED_STATUS;
-        System.out.println("10");
         forwardWithStatus(request, response, status, JSP_PAGE1);
     }
 

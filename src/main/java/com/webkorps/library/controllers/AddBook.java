@@ -51,7 +51,6 @@ public class AddBook extends HttpServlet {
             return;
         }
 
-        // Construct the path to save the file
         String applicationPath = getServletContext().getRealPath("");
         String savePath = applicationPath + "static" + File.separator + SAVE_DIR;
         

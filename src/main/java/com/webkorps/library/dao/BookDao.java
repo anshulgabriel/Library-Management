@@ -60,7 +60,6 @@ public class BookDao {
             int savedBook = statement.executeUpdate();
             if (savedBook > 0) {
                 con.commit();
-                System.out.println("9");
                 return 1;
             }
 
@@ -86,7 +85,6 @@ public class BookDao {
             int savedBook = statement.executeUpdate();
             if (savedBook > 0) {
                 con.commit();
-                System.out.println("9");
                 return 1;
             }
 
@@ -130,7 +128,6 @@ public class BookDao {
             ResultSet rs = statement.executeQuery();
             Book book = null;
             if (rs.next()) {
-                System.out.println("Book available");
                 book = new Book();
                 book.setBookId(rs.getInt("book_id"));
                 book.setBookName(rs.getString("name_of_book"));
@@ -343,7 +340,6 @@ public class BookDao {
 
                 if (!booksForThisTitle.isEmpty()) {
                     finalMap.put(entry.getKey(), booksForThisTitle);
-                    System.out.println(entry.getKey() + " : " + booksForThisTitle);
                 } else {
                     System.out.println("No books found for title: " + entry.getKey());
                 }
@@ -551,7 +547,6 @@ public class BookDao {
             String memberId, String booleanValue, String searchQuery) throws ServletException, IOException {
             
         List<Integer> bookIds = getUserFromBookDetailsUsingId3(memberId, "false");
-        System.out.println("bookIds: " + bookIds);
 
         PrintWriter out = response.getWriter();
 
@@ -564,7 +559,6 @@ public class BookDao {
             }
         }
         query.append(") AND book_author LIKE ?");
-        System.out.println(query);
         try (Connection con = DbUtil.getDataSource().getConnection(); PreparedStatement statement = con.prepareStatement(query.toString());) {
 
             for (int i = 0; i < bookIds.size(); i++) {

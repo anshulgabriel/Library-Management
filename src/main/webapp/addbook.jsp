@@ -1,7 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ include file="navbar.jsp" %>
 <c:if test="${not empty user and user.role == 'user'}">
-    <jsp:forward page="index.jsp" />
+    <jsp:forward page="viewIndexBooks" />
 </c:if>
 <%response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");%>
 <!DOCTYPE html>
@@ -58,7 +58,7 @@
                 swal("Congratulations", "Book Added Successfully", "success")
                         .then(() => {
                             // Redirect after the alert is closed
-                            window.location.href = "http://localhost:8081/LibraryManagement/addbook.jsp";
+                            window.location.href = "http://localhost:8081/LibraryManagement/viewIndexBooks";
                         });
                 localStorage.setItem('alertShown', 'true');
             } else if (status === "failed") {

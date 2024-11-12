@@ -22,7 +22,7 @@
                     <div class="signup-content">
                         <div class="signup-form signup-text ">
                             <h1 class="form-title" style="display:inline-block; padding-right: 10px;">Sign Up</h1>
-                            <a href="http://localhost:8081/LibraryManagement/index.jsp" class="btn btn-warning btn-lg login-home">Home</a>
+                            <a href="http://localhost:8081/LibraryManagement/viewIndexBooks" class="btn btn-warning btn-lg login-home">Home</a>
                             <div class="toggle-switch ms-2" id="toggleSwitch" onclick="toggleSwitch()">
                                 <span id="toggleText"></span>
                             </div>

@@ -9,16 +9,16 @@
         <link rel="stylesheet" href="static/css/mystyle.css">
     </head>
     <body>
-        <header class="p-3 text-white" style="background-color: #57467B;">
+        <header class="p-2 text-white" style="background-color: #57467B;">
             <div class="container">
                 <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                    <a href="http://localhost:8081/LibraryManagement/index.jsp" class="d-flex align-items-center mb-2 pe-2 mb-lg-0 text-white text-decoration-none">
-                        <img class="nav-home-icon" src="static/icons/home.png" alt="Home" height="50">
+                    <a href="http://localhost:8081/LibraryManagement/viewIndexBooks" class="d-flex align-items-center mb-2 pe-2 mb-lg-0 text-white text-decoration-none">
+                        <img class="nav-home-icon" src="static/icons/home10.png" alt="Home" height="50">
                     </a>
 
                     <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                            <c:choose>
-                                <c:when test="${not empty user and user.role == 'admin'}">
+                        <c:choose>
+                            <c:when test="${not empty user and user.role == 'admin'}">
                                 <li><a href="addbook.jsp" class="nav-link px-2 text-white">Add Books</a></li>
                                 <li><a href="issueBooks" class="nav-link px-2 text-white">Issue Books</a></li>
                                 </c:when>
@@ -30,16 +30,21 @@
                                 <li><a href="bookrequested.jsp" class="nav-link px-2 text-white">Books Requested</a></li>
                                 </c:when>
                                 <c:otherwise>
-                            </c:otherwise>
-                        </c:choose>
+                                </c:otherwise>
+                            </c:choose>
                     </ul>
 
                     <c:choose>
                         <c:when test="${not empty user}">
-                            <div class="text-end">
-                                <button type="button" class="btn btn-outline-light me-2">${user.memberId} (${user.role.toUpperCase()})</button>
-                                <a href="logoutFilter"><button type="button" class="btn btn-warning">Sign-out</button></a>
+                            <div>
+                                <div class="text-end text-center">
+                                    <img class="nav-home-icon" src="static/icons/man.png" alt="Home" height="50">
+                                </div>
+                                <div>
+                                    <span style="font-family: sans-serif; color: #ffffff;">${user.memberId} </span><span style="color: darkgray;">(${user.role.toUpperCase()})</span>
+                                </div>
                             </div>
+                            <a href="logoutFilter"><button type="button" class="btn btn-warning ms-5">Sign-out</button></a>
                         </c:when>
                         <c:otherwise>
                             <div class="text-end">

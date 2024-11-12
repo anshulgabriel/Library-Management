@@ -30,7 +30,7 @@
 
                         <div class="signin-form">
                             <h2 class="form-title" style="display: inline-block;">Log In</h2>
-                            <a href="http://localhost:8081/LibraryManagement/index.jsp" class="btn btn-warning btn-lg  mt-0 login-home">Home</a>
+                            <a href="http://localhost:8081/LibraryManagement/viewIndexBooks" class="btn btn-warning btn-lg  mt-0 login-home">Home</a>
                             <form method="post" action="loginFilter" class="register-form"
                                   id="login_form" onsubmit="return loginValidation();">
                                 <div class="form-group">

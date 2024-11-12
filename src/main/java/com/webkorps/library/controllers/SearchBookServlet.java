@@ -21,8 +21,6 @@ public class SearchBookServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User)session.getAttribute("user");
 
-        System.out.println("Query is Working, SearchBookServlet");
-
         String searchQuery = request.getParameter("search");
 
         // Set the response type as HTML

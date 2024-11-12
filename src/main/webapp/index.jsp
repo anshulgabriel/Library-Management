@@ -1,4 +1,3 @@
-
 <%@page import="com.webkorps.library.models.User"%>
 <%@page import="com.webkorps.library.models.Book"%>
 <%@page import="java.util.List"%>
@@ -6,11 +5,6 @@
 <%@ include file="navbar.jsp" %>
 
 <%response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");%>
-<c:if test="${bookList.isEmpty() || bookList == null}">
-    <%
-        response.sendRedirect("viewIndexBooks");
-    %>
-</c:if>
 <!doctype html>
 <html lang="en">
     <head>
@@ -24,27 +18,24 @@
     </head>
     <body>
         <% User user = (User) session.getAttribute("user");%>
-        <% session.removeAttribute("bookId");%>
+        <%
+            if (user != null) {
+        %>
         <div class="jumbotron pt-5 jumbotron-fluid text-center jumbotron-main">
             <div class="container">
                 <h1 class="display-4">Search Your Books Here</h1>
                 <p class="lead">Nothing is pleasanter than exploring a library.</p>
-                <%
-                    if (user != null) {
-                %>
                 <div class="container full-height w-50 justify-content-center align-items-center mt-3 mb-3">
                     <div class="d-flex justify-content-center">
                         <div class="input-group">
-                            <input type="text" class="form-control" id="searchQuery" placeholder="Search for books..."  onkeyup="searchBooks()">
+                            <input type="text" class="form-control" id="searchQuery" placeholder="Search by book name, author..."  onkeyup="searchBooks()">
                         </div>
                     </div>
                 </div>
             </div>
-            <%
-                }
-            %>
             <hr class="custom-hr">
         </div>
+
         <div id="searchResults" style="width: 100%;"></div>
 
         <div class=" jumbotron jumbotron-fluid text-center" id="noQueryDiv">
@@ -59,7 +50,7 @@
                             <p><b>Author:</b> ${book.getBookAuthor()}<br/>
                                 <b>Edition: </b> ${book.getBookEdition()}
                                 <c:if test="${not empty user and user.role == 'user'}">
-                                   <br/> <b>Quantity:</b> ${book.getQuantity() - book.getReservedQuantity()}
+                                    <br/> <b>Available Books: </b> ${book.getQuantity() - book.getReservedQuantity()}
                                 </c:if>
                             </p>
                             </p>
@@ -106,9 +97,9 @@
             </c:if>
 
             <c:if test="${empty bookList}">
-                <img src="${pageContext.request.contextPath}/static/bookimg/BEST-LIBRARY-AUTOMATION-SOFTWARE-min.png" style="width: 100%;"
-                </c:if>                    
-                <nav aria-label="Page navigation">
+                <!--<img src="${pageContext.request.contextPath}/static/bookimg/BEST-LIBRARY-AUTOMATION-SOFTWARE-min.png" style="width: 100%;">-->
+            </c:if>                    
+            <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-center mt-5">
                     <li class="page-item">
                         <c:if test="${currentPage > 1}">
@@ -141,6 +132,12 @@
                 </ul>
             </nav>
         </div>
+        <%
+        } else if (user == null) {
+        %><%@include file="extra.jsp" %>
+        <%
+            }
+            %>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -156,7 +153,6 @@
                                     console.log(memberId);
                                 }
 
-                                // Initialize flatpickr (optional, if you want to have calendar popup)
                                 flatpickr("#startDate", {
                                     allowInput: true,
                                     dateFormat: "d/M/Y",
@@ -167,7 +163,6 @@
                                     dateFormat: "d/M/Y",
                                 });
 
-                                // Function to parse the date from DD/JAN/YYYY format
                                 function parseDate(dateString) {
                                     const parts = dateString.split('/');
                                     if (parts.length !== 3)
@@ -190,7 +185,6 @@
                                     return new Date(year, month, day);
                                 }
 
-                                // Event listener for the submit button
                                 document.getElementById('submitDatesBtn').addEventListener('click', function () {
                                     const startDateValue = document.getElementById('startDate').value;
                                     const endDateValue = document.getElementById('endDate').value;
@@ -198,7 +192,6 @@
                                     const startDate = parseDate(startDateValue);
                                     const endDate = parseDate(endDateValue);
 
-                                    // Validate the dates
                                     if (!startDate || !endDate) {
                                         Swal.fire({
                                             icon: 'error',
@@ -220,7 +213,6 @@
                                         return;
                                     }
 
-                                    // Check if the end date is before the start date
                                     if (endDate < startDate) {
                                         Swal.fire({
                                             icon: 'error',
@@ -230,11 +222,9 @@
                                         return;
                                     }
 
-                                    // Calculate the difference in time
                                     const timeDifference = endDate - startDate;
                                     const dayDifference = timeDifference / (1000 * 3600 * 24);
 
-                                    // Check for the date range constraint
                                     if (dayDifference > 10) {
                                         Swal.fire({
                                             icon: 'error',
@@ -244,18 +234,16 @@
                                         return;
                                     }
 
-                                    // Proceed with sending data or further processing
                                     console.log("Start Date:", startDate);
                                     console.log("End Date:", endDate);
 
-                                    // Send data to the servlet
                                     sendDataToServlet(startDateValue, endDateValue);
 
                                 });
 
                                 function sendDataToServlet(startDate, endDate) {
                                     $.ajax({
-                                        url: 'requestBook', // Replace with your servlet URL
+                                        url: 'requestBook',
                                         type: 'POST',
                                         data: {
                                             bookId: bookId,
@@ -268,28 +256,26 @@
                                                 Swal.fire({
                                                     icon: 'success',
                                                     title: 'This Book Has Been Requested ',
-                                                    text: response.message // Custom message from the servlet
+                                                    text: response.message
                                                 }).then((result) => {
                                                     if (result.isConfirmed) {
-                                                        // Redirect to another page
-                                                        window.location.href = 'index.jsp'; // Change to your target URL
+                                                        window.location.href = 'viewIndexBooks';
                                                     }
                                                 });
                                             } else {
                                                 Swal.fire({
                                                     icon: 'error',
                                                     title: 'Book Not Available',
-                                                    text: response.message // Custom error message from the servlet
+                                                    text: response.message
                                                 }).then((result) => {
                                                     if (result.isConfirmed) {
                                                         // Redirect to another page
-                                                        window.location.href = 'index.jsp'; // Change to your target URL
+                                                        window.location.href = 'viewIndexBooks';
                                                     }
                                                 });
                                             }
 
 
-                                            // Close the modal
                                             const modal = bootstrap.Modal.getInstance(document.getElementById('bookModal'));
                                             modal.hide();
                                         },
@@ -303,8 +289,6 @@
                                         }
                                     });
                                 }
-
-
         </script>
         <script src="static/js/main.js"type="text/javascript"></script>
     </body>

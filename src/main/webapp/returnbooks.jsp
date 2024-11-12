@@ -5,7 +5,7 @@
 <%@ include file="navbar.jsp" %>
 <%response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");%>
 <c:if test="${not empty user and user.role == 'admin'}">
-    <jsp:forward page="index.jsp" />
+    <jsp:forward page="viewIndexBooks" />
 </c:if>
 <!DOCTYPE html>
 <html>

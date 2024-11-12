@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> 
 <%@ include file="navbar.jsp" %>
 <c:if test="${not empty user and user.role == 'user'}">
-    <jsp:forward page="index.jsp" />
+    <jsp:forward page="viewIndexBooks" />
 </c:if>
 <%response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");%>
 <!DOCTYPE html>

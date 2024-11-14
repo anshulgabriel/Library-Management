@@ -15,21 +15,6 @@ public class Book implements Serializable {
     private Date createdDate;
     private String bookImageName;
 
-    public Book() {
-    }
-
-    public Book(long bookId, String bookName, String bookAuthor, String bookEdition, long quantity, String path, long reservedQuantity, Date createdDate, String bookImageName) {
-        this.bookId = bookId;
-        this.bookName = bookName;
-        this.bookAuthor = bookAuthor;
-        this.bookEdition = bookEdition;
-        this.quantity = quantity;
-        this.path = path;
-        this.reservedQuantity = reservedQuantity;
-        this.createdDate = createdDate;
-        this.bookImageName = bookImageName;
-    }
-
     public long getBookId() {
         return bookId;
     }

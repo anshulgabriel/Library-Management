@@ -31,19 +31,19 @@
                         <form method="POST" action="bookEdit" enctype="multipart/form-data">
                             <div class="form-label">
                                 <label for="bookName" class="form-label">Change Book Name</label>
-                                <input type="text" class="form-control" name="bookName" id="bookName" placeholder="${sessionScope.bookName}" minlength="3">
+                                <input type="text" class="form-control" name="bookName" id="bookName" value="${sessionScope.bookName}" minlength="3">
                             </div>
                             <div class="form-label">
                                 <label for="authorName" class="form-label">Change Book Author</label>
-                                <input type="text" class="form-control" name="bookAuthor" id="authorName" placeholder="${sessionScope.bookAuthor}" minlength="3">
+                                <input type="text" class="form-control" name="bookAuthor" id="authorName" value="${sessionScope.bookAuthor}" minlength="3">
                             </div>
                             <div class="form-label">
                                 <label for="edition" class="form-label">Change Book Edition (ex:- 1st Edition) </label>
-                                <input type="text" class="form-control" name="bookEdition" id="edition" placeholder="${sessionScope.bookEdition}" minlength="3">
+                                <input type="text" class="form-control" name="bookEdition" id="edition" value="${sessionScope.bookEdition}" minlength="3">
                             </div>
                             <div class="form-label">
                                 <label for="quantity" class="form-label">Change Book Quantity</label>
-                                <input type="number" class="form-control" name="bookQuantity" id="quantity" placeholder="${sessionScope.bookQuantity}" min="1" max="100">
+                                <input type="number" class="form-control" name="bookQuantity" id="quantity" value="${sessionScope.bookQuantity}" min="1" max="100">
                             </div>
                             <div class="form-label">
                                 <input type="hidden" name="bookId" value="${sessionScope.bookId}" />

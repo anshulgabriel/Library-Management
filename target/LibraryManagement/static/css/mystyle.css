@@ -142,7 +142,6 @@ body {
     border-radius: 0 4px 4px 0;
 }
 
-/* This is just for CodePen. */
 
 .form {
     max-width: 600px;
@@ -187,11 +186,11 @@ body {
 }
 
 .fixed-card {
-    width: 280px;  /* Fixed width */
-    height: 450px; /* Fixed height */
-    display: inline-table; /* Inline table display */
-    margin: 16px; /* Margin around the card */
-    overflow: hidden; /* Hide overflow */
+    width: 280px;  
+    height: 450px; 
+    display: inline-table; 
+    margin: 16px; 
+    overflow: hidden; 
     color: #343a40;
 
 }
@@ -199,7 +198,6 @@ body {
 
 /*------------------------*/
 
-/* Reset and general styles */
 * {
     margin: 0;
     padding: 0;
@@ -409,7 +407,6 @@ body {
     color: #ff7f50;
 }
 
-/* Media Queries for Responsiveness */
 @media (max-width: 768px) {
     .book-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -470,3 +467,14 @@ body {
     }
 }
 
+.nav-link:hover {
+    color: #ff5733 !important; 
+    background-color: #333; 
+    border-radius: 5px; 
+    text-decoration: underline; 
+    padding:4px;
+}
+
+.nav-link {
+    transition: all 0.3s ease;
+}

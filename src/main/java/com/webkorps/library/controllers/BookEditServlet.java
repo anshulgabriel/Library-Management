@@ -18,8 +18,7 @@ import javax.servlet.http.Part;
 @MultipartConfig
 public class BookEditServlet extends HttpServlet {
 
-    private static final String SAVE_DIR = "bookimg"; // folder name
-    private static final String SUCCESS_STATUS = "success";
+    private static final String SAVE_DIR = "bookimg";
     private static final String FAILED_STATUS = "failed";
     private static final String JSP_PAGE1 = "editbook.jsp";
 
@@ -34,34 +33,24 @@ public class BookEditServlet extends HttpServlet {
         String bookEdition = request.getParameter("bookEdition");
         String Quantity = request.getParameter("bookQuantity");
         Part bookImage = request.getPart("bookImage");
-        
-        if(bookName.trim().isBlank() && bookAuthor.trim().isBlank() && bookEdition.trim().isBlank() 
-                && Quantity.trim().isBlank() && bookImage.getSize() <= 0) {
-            request.setAttribute("failed_message", "Update Failed, please update alteast one field");
+
+        if (areFieldsEmpty(bookName, bookAuthor, bookEdition, Quantity, bookImage)) {
+            request.setAttribute("failed_message", "Update Failed, please update at least one field");
             request.setAttribute("status", "failed");
             bookService.forwardWithStatus(request, response, FAILED_STATUS, JSP_PAGE1);
             return;
         }
 
-        
         long bookQuantity;
-        int bookIntId = 0;
+        int bookIntId;
         try {
-            if(!bookId.equals("")) {
-                bookIntId = Integer.parseInt(bookId);
-            }
-            
-            if (!Quantity.equals("")) {
-                bookQuantity = Integer.parseInt(request.getParameter("bookQuantity"));
-            } else {
-                bookQuantity = 10;
-            }
+            bookIntId = (bookId != null && !bookId.isEmpty()) ? Integer.parseInt(bookId) : 0;
+            bookQuantity = (Quantity != null && !Quantity.isEmpty()) ? Integer.parseInt(Quantity) : 10;
         } catch (NumberFormatException ex) {
             bookService.forwardWithStatus(request, response, FAILED_STATUS, JSP_PAGE1);
             return;
         }
 
-        // Construct the path to save the file
         String applicationPath = getServletContext().getRealPath("");
         String savePath = applicationPath + "static" + File.separator + SAVE_DIR;
 
@@ -69,10 +58,16 @@ public class BookEditServlet extends HttpServlet {
 
         if (savedBook.isPresent()) {
             bookService.updateBook(request, response, bookIntId, bookName, bookAuthor, bookEdition, bookQuantity, bookImage, savePath, savedBook);
-        } else {
-            bookService.forwardWithStatus(request, response, FAILED_STATUS, JSP_PAGE1);
+            return;
         }
-
+        bookService.forwardWithStatus(request, response, FAILED_STATUS, JSP_PAGE1);
     }
 
+    private boolean areFieldsEmpty(String bookName, String bookAuthor, String bookEdition, String quantity, Part bookImage) {
+        return isBlank(bookName) && isBlank(bookAuthor) && isBlank(bookEdition) && isBlank(quantity) && (bookImage == null || bookImage.getSize() <= 0);
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
+    }
 }

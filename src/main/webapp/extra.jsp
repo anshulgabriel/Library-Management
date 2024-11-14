@@ -9,7 +9,7 @@
         <link rel="stylesheet" href="static/css/mystyle.css">
         <style>
             .hero {
-                background-image: url('${pageContext.request.contextPath}/static/bookimg/A 4k Ultra HD Wallpaper Of Heart Shaped Bookshelf Filled With-min.jpeg');
+                background-image: url('${pageContext.request.contextPath}/static/bookimg/A 4k Ultra HD Wallpaper Of Heart Shaped Bookshelf Filled With.jpeg');
                 background-size: cover;
                 background-position: center;
                 color: white;

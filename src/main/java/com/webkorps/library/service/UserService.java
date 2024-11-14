@@ -8,7 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import javax.servlet.RequestDispatcher;
+import java.util.Optional;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,8 +34,7 @@ public class UserService {
     public void forwardWithStatus(HttpServletRequest request, HttpServletResponse response, String status, String page)
             throws ServletException, IOException {
         request.setAttribute("status", status);
-        RequestDispatcher rd = request.getRequestDispatcher(page);
-        rd.forward(request, response);
+        request.getRequestDispatcher(page).forward(request, response);
     }
 
     public void paginationMethod(HttpServletRequest request, HttpServletResponse response,
@@ -43,17 +42,12 @@ public class UserService {
         int bookSize = getAllBooks.size();
         int totalPages = bookSize / PAGE_SIZE + 1;
 
-        int currentPage = 1;
-        if (request.getParameter("page") != null) {
-            currentPage = Integer.parseInt(request.getParameter("page"));
-        }
+        int currentPage = Optional.ofNullable(request.getParameter("page"))
+                .map(Integer::parseInt)
+                .filter(p -> p > 0)
+                .orElse(1);
 
-        if (currentPage < 1) {
-            currentPage = 1;
-        }
-        if (currentPage > totalPages) {
-            currentPage = totalPages;
-        }
+        currentPage = Math.max(1, Math.min(currentPage, totalPages));
 
         int startIndex = (currentPage - 1) * PAGE_SIZE;
         int endIndex = Math.min(startIndex + PAGE_SIZE, bookSize);
@@ -85,31 +79,32 @@ public class UserService {
 
     public void updateRenewBooks(HttpServletRequest request, HttpServletResponse response, int bookId, String memberId) throws ServletException, IOException, ParseException {
         BookDetails bookDetailsToRenew = BookDao.fetchBookTorRenew(bookId, memberId);
-        if (bookDetailsToRenew != null && bookDetailsToRenew.getReturnedDate() != null
-                && bookDetailsToRenew.getReturnedDate().equals("Not Returned")) {
-            String returnDate = bookDetailsToRenew.getReturnDate();
 
-            if (checkRenewRequestedDate(returnDate)) {
-                String renewedDate = increaseDate(returnDate);
-                boolean bookRenewed = BookDao.renewBookOfUser(bookId, memberId, renewedDate);
-                if (bookRenewed) {
-                    BookDetails bookDetails = new BookDetails();
-                    bookDetails.setBookId(bookId);
-                    bookDetails.setMemberId(memberId);
-                    if (BookDao.BookConfirmedByAnotherUser(bookDetails)) {
-                        forwardWithStatus(request, response, SUCCESS_STATUS, "returnBookList?pageName=renew_books");
-                    } else {
-                        forwardWithStatus(request, response, FAILED_STATUS, "returnBookList?pageName=renew_books");
-                    }
-                } else {
-                    forwardWithStatus(request, response, FAILED_STATUS, "returnBookList?pageName=renew_books");
-                }
-            } else {
-                forwardWithStatus(request, response, FAILED_STATUS, "returnBookList?pageName=renew_books");
-            }
-        } else {
+        if (bookDetailsToRenew == null || !"Not Returned".equals(bookDetailsToRenew.getReturnedDate())) {
             forwardWithStatus(request, response, FAILED_STATUS, "returnBookList?pageName=renew_books");
+            return;
         }
+
+        if (!checkRenewRequestedDate(bookDetailsToRenew.getReturnDate())) {
+            forwardWithStatus(request, response, FAILED_STATUS, "returnBookList?pageName=renew_books");
+            return;
+        }
+
+        String renewedDate = increaseDate(bookDetailsToRenew.getReturnDate());
+
+        boolean bookRenewed = BookDao.renewBookOfUser(bookId, memberId, renewedDate);
+        if (!bookRenewed) {
+            forwardWithStatus(request, response, FAILED_STATUS, "returnBookList?pageName=renew_books");
+            return;
+        }
+
+        BookDetails bookDetails = new BookDetails();
+        bookDetails.setBookId(bookId);
+        bookDetails.setMemberId(memberId);
+
+        boolean isConfirmed = BookDao.BookConfirmedByAnotherUser(bookDetails);
+        String status = isConfirmed ? SUCCESS_STATUS : FAILED_STATUS;
+        forwardWithStatus(request, response, status, "returnBookList?pageName=renew_books");
     }
 
     public String increaseDate(String date) {
@@ -118,7 +113,7 @@ public class UserService {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MMM/yyyy");
             Date parsedDate = dateFormat.parse(date);
             long milliseconds = parsedDate.getTime();
-            long tenDaysInMillis = 10 * 24 * 60 * 60 * 1000L;  // 10 days in milliseconds
+            long tenDaysInMillis = 10 * 24 * 60 * 60 * 1000L;
             Date renewedDate = new Date(milliseconds + tenDaysInMillis);
             renewedDateString = dateFormat.format(renewedDate);
         } catch (ParseException ex) {
@@ -133,7 +128,7 @@ public class UserService {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MMM/yyyy");
             Date parsedDate = dateFormat.parse(date);
             long milliseconds = parsedDate.getTime();
-            long MinusTwoDays = 2 * 24 * 60 * 60 * 1000L;  // 2 days in milliseconds
+            long MinusTwoDays = 2 * 24 * 60 * 60 * 1000L;
             Date renewedDate = new Date(milliseconds - MinusTwoDays);
             Date todayDate = new Date();
 

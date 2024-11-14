@@ -13,10 +13,6 @@ import javax.servlet.http.HttpSession;
 @WebServlet("/returnBookList")
 public class ReturnBookServlet extends HttpServlet {
 
-    private static final String SUCCESS_STATUS = "success";
-    private static final String FAILED_STATUS = "failed";
-    private static final String JSP_PAGE = "requestedbooks.jsp";
-
     UserService userService = null;
 
     public ReturnBookServlet() {
@@ -30,10 +26,8 @@ public class ReturnBookServlet extends HttpServlet {
 
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        String memberId = "";
-        if (user != null) {
-            memberId = user.getMemberId();
-        }
+        
+        String memberId = (user != null) ? user.getMemberId() : "";
 
         if (pageName != null && pageName.equalsIgnoreCase("renew_books")) {
             userService.RenewBooks(request, response, memberId);

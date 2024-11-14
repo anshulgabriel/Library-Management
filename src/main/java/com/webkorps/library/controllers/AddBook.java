@@ -15,13 +15,12 @@ import javax.servlet.http.Part;
 @MultipartConfig
 public class AddBook extends HttpServlet {
 
-    private static final String SAVE_DIR = "bookimg"; // folder name
-    private static final String SUCCESS_STATUS = "success";
+    private static final String SAVE_DIR = "bookimg";
     private static final String FAILED_STATUS = "failed";
     private static final String JSP_PAGE = "addbook.jsp";
-    
-    BookService bookService = new BookService();
 
+    BookService bookService = new BookService();
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -31,21 +30,16 @@ public class AddBook extends HttpServlet {
         String bookEdition = request.getParameter("book_edition");
         Part bookImage = request.getPart("book_image");
 
-        // Validate inputs
-        if (bookName == null || bookName.equals("")
-                || bookAuthor == null || bookAuthor.equals("")
-                || bookEdition == null || bookEdition.equals("")) {
+        if (isBlank(bookName) || isBlank(bookAuthor) || isBlank(bookEdition)) {
             bookService.forwardWithStatus(request, response, FAILED_STATUS, JSP_PAGE);
             return;
         }
+
         String Quantity = request.getParameter("book_quantity");
         int bookQuantity;
+
         try {
-            if (Quantity.length() > 0) {
-                bookQuantity = Integer.parseInt(request.getParameter("book_quantity"));
-            } else {
-                bookQuantity = 10;
-            }
+            bookQuantity = (Quantity.isEmpty()) ? 10 : Integer.parseInt(request.getParameter("book_quantity"));
         } catch (NumberFormatException ex) {
             bookService.forwardWithStatus(request, response, FAILED_STATUS, JSP_PAGE);
             return;
@@ -53,8 +47,11 @@ public class AddBook extends HttpServlet {
 
         String applicationPath = getServletContext().getRealPath("");
         String savePath = applicationPath + "static" + File.separator + SAVE_DIR;
-        
-        bookService.AddBook(request, response, bookName, bookAuthor, bookEdition, bookQuantity, bookImage, savePath);
 
+        bookService.AddBook(request, response, bookName, bookAuthor, bookEdition, bookQuantity, bookImage, savePath);
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.isEmpty();
     }
 }

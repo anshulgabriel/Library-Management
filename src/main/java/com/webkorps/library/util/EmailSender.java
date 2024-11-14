@@ -15,7 +15,6 @@ public class EmailSender {
     public static boolean sendEmail(String email, String name, String memberId, String userPass) {
 
         boolean flag = false;
-        // Set up properties for the mail server
         Properties properties = new Properties();
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.host", "smtp.gmail.com");
@@ -25,6 +24,31 @@ public class EmailSender {
         String username = "anshul.g@webkorps.com";
         String password = "blocgpvteeuyaqtc";
         String from = "anshul.g@webkorps.com";
+        String text = getMessageText(name, memberId, userPass);
+
+        Session session = Session.getInstance(properties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(from));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+            message.setSubject("Confirmation Email From WebKorps");
+            message.setContent(text, "text/html");
+
+            Transport.send(message);
+            flag = true;
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        return flag;
+    }
+
+    public static String getMessageText(String name, String memberId, String userPass) {
         String text = "<!DOCTYPE html>\n"
                 + "<html lang=\"en\">\n"
                 + "<head>\n"
@@ -103,28 +127,6 @@ public class EmailSender {
                 + "</body>\n"
                 + "</html>";
 
-        Session session = Session.getInstance(properties, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password);
-            }
-        });
-
-        try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(from));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
-            message.setSubject("Confirmation Email From WebKorps");
-            message.setContent(text, "text/html");
-
-            Transport.send(message);
-            flag = true;
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-
-        return flag;
-
+        return text;
     }
-
 }

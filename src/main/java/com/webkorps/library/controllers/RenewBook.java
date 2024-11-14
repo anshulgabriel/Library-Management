@@ -9,12 +9,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 @WebServlet("/renewBook")
 public class RenewBook extends HttpServlet {
 
-    private static final String SUCCESS_STATUS = "success";
     private static final String FAILED_STATUS = "failed";
     private static final String JSP_PAGE = "requestedbooks.jsp";
 
@@ -30,18 +28,16 @@ public class RenewBook extends HttpServlet {
 
         String bookId = request.getParameter("bookId");
 
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-        String memberId = user.getMemberId();
+        User user = (User)request.getSession().getAttribute("user");
+        String memberId = (user !=null) ? user.getMemberId() : "";
 
-        int bookIdInt = 0;
-        if (bookId != null && memberId != null) {
-            bookIdInt = Integer.parseInt(bookId);
-        } else {
+        if (bookId == null || memberId == null) {
             userService.forwardWithStatus(request, response, FAILED_STATUS, JSP_PAGE);
+            return;
         }
 
         try {
+            int bookIdInt = Integer.parseInt(bookId);
             userService.updateRenewBooks(request, response, bookIdInt, memberId);
         } catch (ParseException ex) {
             ex.printStackTrace();

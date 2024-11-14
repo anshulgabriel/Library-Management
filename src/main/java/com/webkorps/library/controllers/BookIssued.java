@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -35,24 +36,19 @@ public class BookIssued extends HttpServlet {
         List<Book> getAllBooks = new ArrayList<>();
 
         for (Map.Entry<List<BookDetails>, List<Book>> entry : getAllBooksWIthMap.entrySet()) {
-            allBookDetails.addAll(entry.getKey());  // Add BookDetails from the key
-            getAllBooks.addAll(entry.getValue());      // Add Books from the value
+            allBookDetails.addAll(entry.getKey());
+            getAllBooks.addAll(entry.getValue());
         }
 
         int bookSize = getAllBooks.size();
         int totalPages = bookSize / PAGE_SIZE + 1;
+        
+        int currentPage = Optional.ofNullable(request.getParameter("page"))
+                .map(Integer::parseInt)
+                .filter(page -> page > 0)
+                .orElse(1);
 
-        int currentPage = 1;
-        if (request.getParameter("page") != null) {
-            currentPage = Integer.parseInt(request.getParameter("page"));
-        }
-
-        if (currentPage < 1) {
-            currentPage = 1;
-        }
-        if (currentPage > totalPages) {
-            currentPage = totalPages;
-        }
+        currentPage = Math.max(1, Math.min(currentPage, totalPages));
 
         int startIndex = (currentPage - 1) * PAGE_SIZE;
         int endIndex = Math.min(startIndex + PAGE_SIZE, bookSize);

@@ -7,7 +7,6 @@ public class CompressMyImage {
     
     public static BufferedImage compressImage(BufferedImage originalImage, Part bookImage) {
         if (bookImage.getSize() > 0) {
-            // Example compression: Resize the image to a maximum width/height of 800 pixels
             int maxWidth = 800;
             int maxHeight = 800;
             int width = originalImage.getWidth();

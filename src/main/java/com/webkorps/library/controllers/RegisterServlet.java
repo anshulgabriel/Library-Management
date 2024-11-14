@@ -6,7 +6,6 @@ import static com.webkorps.library.dao.LoginDao.doesEmailExist;
 import com.webkorps.library.util.EmailSender;
 import java.io.IOException;
 import java.util.Random;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,63 +18,48 @@ public class RegisterServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String name = "";
+        String name;
         name = request.getParameter("name");
         String libraryName = request.getParameter("library_name");
         String address = request.getParameter("address");
         String email = request.getParameter("email");
-        String role = "";
+        String role;
         String password = request.getParameter("pass");
-        String checkTerms = request.getParameter("agree-term");
 
         if (doesEmailExist(email)) {
             request.setAttribute("status", "failed");
             request.setAttribute("register_message", "Email already exist, please try with a different email.");
-            RequestDispatcher rd = request.getRequestDispatcher("signup.jsp");
-            rd.forward(request, response);
+            request.getRequestDispatcher("signup.jsp").forward(request, response);
             return;
         }
 
-        if (libraryName.length() > 0 && address.length() > 0) {
-            String memberId = generateMemberId(name);
-            role = "admin";
-            int adminSaved = saveAdmin(memberId, name, libraryName, address, email, role, password);
-            if (adminSaved > 0) {
-                request.setAttribute("status", "success");
-                request.setAttribute("register_message", "Account Created Successfully.\nPlease Check Your Email For MemberId and Password");
-                boolean sendEmail = EmailSender.sendEmail(email.trim(), name, memberId, password);
-                RequestDispatcher rd = request.getRequestDispatcher("signup.jsp");
-                rd.forward(request, response);
-            } else {
-                request.setAttribute("status", "failed");
-                request.setAttribute("register_message", "Account Created Successfully.\nPlease Check Your Email For MemberId and Password");
-                RequestDispatcher rd = request.getRequestDispatcher("signup.jsp");
-                rd.forward(request, response);
-            }
-        } else if (libraryName.length() <= 0 && address.length() <= 0) {
-            String memberId = generateMemberId(name);
-            role = "user";
-            int userSaved = saveUser(memberId, name, email, role, password);
+        String memberId = generateMemberId(name);
+        String registerMessage = "Account Created Successfully.\nPlease Check Your Email For MemberId and Password";
+        String errorMessage = "Something went wrong, please try again!";
 
-            if (userSaved > 0) {
-                EmailSender.sendEmail(email.trim(), name, memberId, password);
-                request.setAttribute("status", "success");
-                request.setAttribute("register_message", "Account Created Successfully.\nPlease Check Your Email For MemberId and Password");
-                RequestDispatcher rd = request.getRequestDispatcher("signup.jsp");
-                rd.forward(request, response);
-            } else {
-                request.setAttribute("status", "failed");
-                request.setAttribute("register_message", "Something went wrong, please try again!");
-                RequestDispatcher rd = request.getRequestDispatcher("signup.jsp");
-                rd.forward(request, response);
-            }
-        } else {
-            request.setAttribute("status", "failed");
-            request.setAttribute("register_message", "Something went wrong, please try again!");
-            RequestDispatcher rd = request.getRequestDispatcher("signup.jsp");
-            rd.forward(request, response);
+        boolean isLibraryAdmin = libraryName.length() > 0 && address.length() > 0;
+        boolean isUser = !isLibraryAdmin && libraryName.length() <= 0 && address.length() <= 0;
+
+        int saveResult = 0;
+
+        if (isLibraryAdmin) {
+            role = "admin";
+            saveResult = saveAdmin(memberId, name, libraryName, address, email, role, password);
+        } else if (isUser) {
+            role = "user";
+            saveResult = saveUser(memberId, name, email, role, password);
         }
 
+        if (saveResult > 0) {
+            EmailSender.sendEmail(email.trim(), name, memberId, password);
+            request.setAttribute("status", "success");
+            request.setAttribute("register_message", registerMessage);
+        } else {
+            request.setAttribute("status", "failed");
+            request.setAttribute("register_message", errorMessage);
+        }
+
+        request.getRequestDispatcher("signup.jsp").forward(request, response);
     }
 
     public String generateMemberId(String name) {
@@ -85,5 +69,4 @@ public class RegisterServlet extends HttpServlet {
         String memberId = memId[0] + "" + threeDigitNumber;
         return memberId;
     }
-
 }

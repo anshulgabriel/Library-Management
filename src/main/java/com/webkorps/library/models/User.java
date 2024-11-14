@@ -10,20 +10,6 @@ public class User {
     private String role;
     private String password;
 
-    public User() {
-    }
-
-    public User(long userId, String memberId, String name, String nameOfLibrary, String address, String email, String role, String password) {
-        this.userId = userId;
-        this.memberId = memberId;
-        this.name = name;
-        this.nameOfLibrary = nameOfLibrary;
-        this.address = address;
-        this.email = email;
-        this.role = role;
-        this.password = password;
-    }
-
     public long getUserId() {
         return userId;
     }

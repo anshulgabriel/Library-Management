@@ -2,7 +2,6 @@ package com.webkorps.library.controllers;
 
 import com.webkorps.library.dao.BookDao;
 import java.io.IOException;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,20 +17,15 @@ public class CancelBookRequest extends HttpServlet {
 
         String memberId = request.getParameter("memberId");
         String bookId = request.getParameter("bookId");
-        
-        int bookIdInt = Integer.parseInt(bookId);
 
-        if (BookDao.deleteBookDetails(memberId, bookIdInt)) {
-            forwardWithStatus(request, response, "nothing");
-        } else {
-            forwardWithStatus(request, response, "success");
-        }
+        int bookIdInt = Integer.parseInt(bookId);
+        
+        forwardWithStatus(request, response, BookDao.deleteBookDetails(memberId, bookIdInt) ? "nothing" : "success");
     }
 
     private void forwardWithStatus(HttpServletRequest request, HttpServletResponse response, String status)
             throws ServletException, IOException {
         request.setAttribute("status", status);
-        RequestDispatcher rd = request.getRequestDispatcher("requestedBooks");
-        rd.forward(request, response);
+        request.getRequestDispatcher("requestedBooks").forward(request, response);
     }
 }

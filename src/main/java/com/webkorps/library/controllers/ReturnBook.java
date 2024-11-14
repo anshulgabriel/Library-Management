@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/returnBook")
 public class ReturnBook extends HttpServlet {
 
-    private static final String SUCCESS_STATUS = "success";
     private static final String FAILED_STATUS = "failed";
     private static final String JSP_PAGE = "requestedbooks.jsp";
 
@@ -28,10 +27,11 @@ public class ReturnBook extends HttpServlet {
         String bookId = request.getParameter("bookId");
         String memberId = request.getParameter("memberId");
 
-        int bookIdInt = 0;
-        if (bookId != null && memberId != null) {
-            bookIdInt = Integer.parseInt(bookId);
-        } else {
+        int bookIdInt = (bookId != null && memberId != null)
+                ? Integer.parseInt(bookId)
+                : 0;
+
+        if (bookIdInt == 0) {
             userService.forwardWithStatus(request, response, FAILED_STATUS, JSP_PAGE);
         }
 

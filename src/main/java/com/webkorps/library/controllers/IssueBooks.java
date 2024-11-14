@@ -14,17 +14,14 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/issueBooks")
 public class IssueBooks extends HttpServlet {
 
-    private static final int PAGE_SIZE = 12;
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         Map<String, List<Book>> getBooks = getAllBooks("false");
-        request.setAttribute("booksWithUser", getBooks);        
+        request.setAttribute("booksWithUser", getBooks);
 
         request.getRequestDispatcher("issuebooks.jsp").forward(request, response);
-
     }
 
     private Map<String, List<Book>> getAllBooks(String booleanValue) {

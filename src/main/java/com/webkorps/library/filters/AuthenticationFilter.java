@@ -29,22 +29,21 @@ public class AuthenticationFilter implements Filter {
 
         String requestURI = httpRequest.getRequestURI();
 
-        
         if (requestURI.endsWith("/index.jsp") || requestURI.endsWith("/login.jsp")
                 || requestURI.endsWith("/signup.jsp") || isResourceRequest(requestURI)
                 || requestURI.endsWith("/loginFilter")
                 || requestURI.endsWith("/registerFilter")
                 || requestURI.endsWith("/viewIndexBooks")
                 || requestURI.endsWith("/welcome.jsp")) {
-            chain.doFilter(request, response); 
+            chain.doFilter(request, response);
             return;
         }
 
         boolean loggedIn = (session != null && session.getAttribute("user") != null);
         if (loggedIn) {
-            chain.doFilter(request, response); 
+            chain.doFilter(request, response);
         } else {
-            httpResponse.sendRedirect("viewIndexBooks"); 
+            httpResponse.sendRedirect("viewIndexBooks");
         }
     }
 
@@ -53,11 +52,6 @@ public class AuthenticationFilter implements Filter {
                 || uri.endsWith(".png") || uri.endsWith(".jpg")
                 || uri.endsWith(".jpeg") || uri.endsWith(".gif")
                 || uri.endsWith(".woff") || uri.endsWith(".woff2")
-                || uri.endsWith(".ttf") || uri.endsWith(".svg")
-                || uri.startsWith("/static/"); // Adjust path as necessary
-    }
-
-    @Override
-    public void destroy() {
+                || uri.startsWith("/static/");
     }
 }

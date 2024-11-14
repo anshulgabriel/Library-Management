@@ -3,6 +3,7 @@
 <%@page import="com.webkorps.library.models.Book"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ include file="navbar.jsp" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");%>
 <c:if test="${not empty user and user.role == 'admin'}">
     <jsp:forward page="viewIndexBooks" />
@@ -58,6 +59,12 @@
                                             <div>
                                                 <label><b>Issue Date:</b> ${details.issueDate}</label><br/>
                                                 <label><b>Return Date:</b> ${details.returnDate}</label>
+                                                <c:if test="${details.returnedDate != 'Not Returned'}">
+                                                    <label><b>Returned Date:</b>
+                                                        <fmt:parseDate value="${details.returnedDate}" pattern="yyyy-MM-dd" var="parsedDate" />
+                                                        <fmt:formatDate value="${parsedDate}" pattern="dd/MMM/yyyy" />
+                                                    </label>
+                                                </c:if>
                                             </div>
                                         </c:if>
                                     </c:forEach>
@@ -123,7 +130,7 @@
                                                 confirmButtonText: "Ok"
                                             }).then(() => {
                                                 // Redirect after the alert is closed
-                                                window.location.href = "http://localhost:8081/LibraryManagement/returnBookList?";
+                                                window.location.href = "http://localhost:8081/LibraryManagement/returnBookList?pageName=renew_books";
                                             });
                                             // Set the flag to ensure the alert isn't shown again
                                             localStorage.setItem('alertShown', 'true');

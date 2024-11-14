@@ -37,10 +37,9 @@
         </div>
 
         <div id="searchResults" style="width: 100%;"></div>
-
         <div class=" jumbotron jumbotron-fluid text-center" id="noQueryDiv">
             <c:if test="${not empty bookList}">
-
+                <c:remove var="bookId" scope="session"/>
                 <c:forEach var="book" items="${bookList}">
                     <div class="card fixed-card">
                         <img src="${pageContext.request.contextPath}/static/bookimg/${book.getBookImageName()}" class="card-img-top" alt="..." style="height:200px;">
@@ -97,7 +96,6 @@
             </c:if>
 
             <c:if test="${empty bookList}">
-                <!--<img src="${pageContext.request.contextPath}/static/bookimg/BEST-LIBRARY-AUTOMATION-SOFTWARE-min.png" style="width: 100%;">-->
             </c:if>                    
             <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-center mt-5">

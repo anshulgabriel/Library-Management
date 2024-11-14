@@ -5,6 +5,7 @@ import com.webkorps.library.models.Book;
 import com.webkorps.library.models.User;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -23,25 +24,18 @@ public class RequestedBooks extends HttpServlet {
 
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        
-        StringBuffer requestURL = request.getRequestURL();
-        
+
         List<Book> getAllBooks = getAllBooks(user.getMemberId(), "false");
 
         int bookSize = getAllBooks.size();
         int totalPages = bookSize / PAGE_SIZE + 1;
 
-        int currentPage = 1;
-        if (request.getParameter("page") != null) {
-            currentPage = Integer.parseInt(request.getParameter("page"));
-        }
+        int currentPage = Optional.ofNullable(request.getParameter("page"))
+                .map(Integer::parseInt)
+                .filter(page -> page > 0)
+                .orElse(1);
 
-        if (currentPage < 1) {
-            currentPage = 1;
-        }
-        if (currentPage > totalPages) {
-            currentPage = totalPages;
-        }
+        currentPage = Math.max(1, Math.min(currentPage, totalPages));
 
         int startIndex = (currentPage - 1) * PAGE_SIZE;
         int endIndex = Math.min(startIndex + PAGE_SIZE, bookSize);

@@ -11,20 +11,6 @@ public class BookDetails {
     private long bookId;
     private String isBookRenewed;
 
-    public BookDetails() {
-    }
-
-    public BookDetails(long id, String bookApproved, String issueDate, String returnDate, String returnedDate, String memberId, long bookId, String isBookRenewed) {
-        this.id = id;
-        this.bookApproved = bookApproved;
-        this.issueDate = issueDate;
-        this.returnDate = returnDate;
-        this.returnedDate = returnedDate;
-        this.memberId = memberId;
-        this.bookId = bookId;
-        this.isBookRenewed = isBookRenewed;
-    }
-
     public long getId() {
         return id;
     }

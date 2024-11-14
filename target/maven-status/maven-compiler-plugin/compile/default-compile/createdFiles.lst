@@ -29,6 +29,5 @@ com\webkorps\library\controllers\RequestBook.class
 com\webkorps\library\controllers\SearchBookServlet.class
 com\webkorps\library\util\CompressMyImage.class
 com\webkorps\library\controllers\RenewBook.class
-com\webkorps\library\validation\ValidationClass.class
 com\webkorps\library\dao\BookDao.class
 com\webkorps\library\util\EmailSender.class

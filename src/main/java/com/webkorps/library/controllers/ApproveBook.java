@@ -17,10 +17,7 @@ public class ApproveBook extends HttpServlet {
         String bookId = request.getParameter("bookId");
         String memberId = request.getParameter("memberId");
 
-        int bookIdInt = 0;
-        if (bookId != null) {
-            bookIdInt = Integer.parseInt(bookId);
-        }
+        int bookIdInt = (bookId != null) ? Integer.parseInt(bookId) : 0;
 
         BookDao.approveUserBook(bookIdInt, memberId);
         

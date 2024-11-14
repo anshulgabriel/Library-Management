@@ -10,12 +10,12 @@ public class DbUtil {
     
     static {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:mysql://localhost:3306/library_management"); // Database URL
-        config.setUsername("root"); // Database username
-        config.setPassword("WebKorps@123"); // Database password
-        config.setDriverClassName("com.mysql.cj.jdbc.Driver"); // MySQL JDBC driver
-        config.setMaximumPoolSize(10); // Maximum number of connections
-        config.setMinimumIdle(2); // Minimum number of idle connections
+        config.setJdbcUrl("jdbc:mysql://localhost:3306/library_management"); 
+        config.setUsername("root"); 
+        config.setPassword("WebKorps@123"); 
+        config.setDriverClassName("com.mysql.cj.jdbc.Driver"); 
+        config.setMaximumPoolSize(10); 
+        config.setMinimumIdle(2); 
 
         dataSource = new HikariDataSource(config);
     }

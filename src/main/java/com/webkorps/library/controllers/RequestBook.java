@@ -15,10 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/requestBook")
 public class RequestBook extends HttpServlet {
 
-    private static final String SUCCESS_STATUS = "success";
-    private static final String FAILED_STATUS = "failed";
-    private static final String JSP_PAGE = "index.jsp";
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -29,40 +25,49 @@ public class RequestBook extends HttpServlet {
         String memberId = request.getParameter("memberId");
 
         int bookIdInt = Integer.parseInt(bookId);
+        Optional<BookDetails> existingBookDetails = BookDao.bookWithSameUserExist(bookId, memberId);
+        boolean saveSuccessful = processBookRequest(existingBookDetails, bookIdInt, memberId, startDate, endDate);
 
-        Optional<BookDetails> bookDetails = BookDao.bookWithSameUserExist(bookId, memberId);
-        String failedMessage = "This Book Has Been Requested By Another User Already.";
-        boolean saveBookDetails = false;
-        if (!bookDetails.isPresent()) {
-            Optional<Book> book = BookDao.getBookUsingId(bookIdInt);
-            BookDetails CheckRenewBook = BookDao.RenewBook(bookIdInt);
-            if (book.get().getQuantity() - book.get().getReservedQuantity() > 0) {
-                saveBookDetails = BookDao.saveBookDetails(memberId, bookIdInt, startDate, endDate);
-            } else if (book.get().getQuantity() - book.get().getReservedQuantity() <= 0 && CheckRenewBook != null) {
-                if (BookDao.BookConfirmedByAnotherUser(CheckRenewBook)) {
-                    if (BookDao.saveBookDetails(memberId, bookIdInt, "Not Given", "Not Given")) {
-                        saveBookDetails = true;
-                    }
-                }
-            }
-            failedMessage = "This Book Is Not Available Anymore.";
-        } else {
-            Optional<Book> book = BookDao.getBookUsingId((int) bookDetails.get().getBookId());
-            if (book.get().getQuantity() - book.get().getReservedQuantity() > 0 && !bookDetails.get().getReturnedDate().equalsIgnoreCase("Not Returned")) {
-                saveBookDetails = BookDao.saveBookDetails(memberId, bookIdInt, startDate, endDate);
-            }
-            failedMessage = "You Can Request The Same Book Only Once.";
+        String message = saveSuccessful
+                ? "Book Requested. Soon Will Be Approved By Admin."
+                : (existingBookDetails.isPresent()
+                ? "You Can Request The Same Book Only Once."
+                : "This Book Is Not Available Anymore.");
+
+        sendJsonResponse(response, saveSuccessful, message);
+    }
+
+    private boolean processBookRequest(Optional<BookDetails> existingBookDetails, int bookIdInt, String memberId, String startDate, String endDate) {
+        if (existingBookDetails.isPresent()) {
+            return handleExistingBookRequest(existingBookDetails.get(), bookIdInt, memberId, startDate, endDate);
+        }
+        return handleNewBookRequest(bookIdInt, memberId, startDate, endDate);
+    }
+
+    private boolean handleExistingBookRequest(BookDetails bookDetails, int bookIdInt, String memberId, String startDate, String endDate) {
+        Book book = BookDao.getBookUsingId((int) bookDetails.getBookId()).orElse(null);
+        return (book != null && book.getQuantity() - book.getReservedQuantity() > 0
+                && !"Not Returned".equalsIgnoreCase(bookDetails.getReturnedDate()))
+                && BookDao.saveBookDetails(memberId, bookIdInt, startDate, endDate);
+    }
+
+    private boolean handleNewBookRequest(int bookIdInt, String memberId, String startDate, String endDate) {
+        Book book = BookDao.getBookUsingId(bookIdInt).orElse(null);
+        BookDetails renewBookCheck = BookDao.RenewBook(bookIdInt);
+        if (book == null) {
+            return false;
         }
 
-        boolean success = saveBookDetails;
-        String message = success ? "Book Requested. Soon Will Be Approved By Admin." : failedMessage;
+        int availableQuantity = (int)(book.getQuantity() - book.getReservedQuantity());
+        return (availableQuantity > 0 && BookDao.saveBookDetails(memberId, bookIdInt, startDate, endDate))
+                || (renewBookCheck != null && BookDao.BookConfirmedByAnotherUser(renewBookCheck)
+                && BookDao.saveBookDetails(memberId, bookIdInt, "Not Given", "Not Given"));
+    }
 
-        response.setContentType(
-                "application/json");
-        PrintWriter out = response.getWriter();
-
-        out.print(
-                "{\"success\": " + success + ", \"message\": \"" + message + "\"}");
-        out.flush();
+    private void sendJsonResponse(HttpServletResponse response, boolean success, String message) throws IOException {
+        response.setContentType("application/json");
+        try (PrintWriter out = response.getWriter()) {
+            out.print("{\"success\": " + success + ", \"message\": \"" + message + "\"}");
+        }
     }
 }
